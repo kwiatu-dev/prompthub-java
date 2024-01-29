@@ -23,7 +23,7 @@ public class BaseEntity implements Serializable {
 
     @ManyToOne
     @CreatedBy
-    @Column(name = "created_by")
+    @JoinColumn(name = "created_by")
     private User createdBy;
 
     @CreatedDate
@@ -32,7 +32,7 @@ public class BaseEntity implements Serializable {
 
     @ManyToOne
     @LastModifiedBy
-    @Column(name = "modified_by")
+    @JoinColumn(name = "modified_by")
     private User modifiedBy;
 
     @LastModifiedDate
@@ -40,7 +40,7 @@ public class BaseEntity implements Serializable {
     private LocalDateTime modifiedAt;
 
     @ManyToOne
-    @Column(name = "deleted_by")
+    @JoinColumn(name = "deleted_by")
     private User deletedBy;
 
     @Column(name = "deleted_at")

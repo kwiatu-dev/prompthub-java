@@ -1,4 +1,4 @@
-package com.springboot.prompthub;
+package com.springboot.prompthub.config;
 
 import com.springboot.prompthub.entity.User;
 import com.springboot.prompthub.service.impl.AuditorAwareImpl;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
 @EnableJpaAuditing
-public class Config {
+public class AppConfig {
 
     @Bean
     public AuditorAware<User> auditorProvider() {

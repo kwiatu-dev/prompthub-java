@@ -10,15 +10,10 @@ import org.hibernate.annotations.UuidGenerator;
 @Entity
 @Getter
 @Setter
-public class User {
-    @Id
-    @UuidGenerator
-    private String id;
-
+public class User extends BaseEntity{
     @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
-
 }
