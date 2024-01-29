@@ -2,6 +2,7 @@ package com.springboot.prompthub.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -28,7 +29,7 @@ public class BaseEntity implements Serializable {
 
     @CreatedDate
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     @ManyToOne
     @LastModifiedBy
@@ -37,12 +38,12 @@ public class BaseEntity implements Serializable {
 
     @LastModifiedDate
     @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
+    private Date modifiedAt;
 
     @ManyToOne
     @JoinColumn(name = "deleted_by")
     private User deletedBy;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    private Date deletedAt;
 }

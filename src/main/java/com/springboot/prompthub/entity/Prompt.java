@@ -4,12 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Type;
 
 import java.io.IOException;
 import java.util.List;
 
 @Entity
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class Prompt extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
