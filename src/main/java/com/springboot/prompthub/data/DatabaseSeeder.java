@@ -35,10 +35,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         int usersCount = userRepository.findAll().size();
-
-        if(usersCount != 0){
-            return;
-        }
+        if(usersCount != 0) return;
 
         Random random = new Random();
 
