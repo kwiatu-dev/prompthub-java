@@ -5,20 +5,41 @@ import com.springboot.prompthub.entity.BaseEntity;
 import com.springboot.prompthub.entity.Project;
 import com.springboot.prompthub.entity.Prompt;
 import com.springboot.prompthub.entity.User;
+import com.springboot.prompthub.repository.ProjectRepository;
+import com.springboot.prompthub.repository.PromptRepository;
+import com.springboot.prompthub.repository.UserRepository;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
 
 @Component
-public class DatabaseSeeder {
+public class DatabaseSeeder implements CommandLineRunner {
     private final DataFactory dataFactory;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
+    private final PromptRepository promptRepository;
 
-    public DatabaseSeeder(DataFactory dataFactory){
+    public DatabaseSeeder(
+            DataFactory dataFactory,
+            UserRepository userRepository,
+            ProjectRepository projectRepository,
+            PromptRepository promptRepository) {
         this.dataFactory = dataFactory;
+        this.userRepository = userRepository;
+        this.projectRepository = projectRepository;
+        this.promptRepository = promptRepository;
     }
 
-    public SeedResult seed(){
+    @Override
+    public void run(String... args) throws Exception {
+        int usersCount = userRepository.findAll().size();
+
+        if(usersCount != 0){
+            return;
+        }
+
         Random random = new Random();
 
         User admin = new User();
@@ -27,6 +48,7 @@ public class DatabaseSeeder {
 
         List<User> users = dataFactory.generateUsers(10);
         users.forEach(user -> setAuditableBy(user, admin));
+        users.add(admin);
 
         List<Project> projects = dataFactory.generateProjects(10);
 
@@ -43,24 +65,15 @@ public class DatabaseSeeder {
             setAuditableBy(prompt, project.getCreatedBy());
         });
 
-        return new SeedResult(
-            users,
-            projects,
-            prompts
-        );
+        userRepository.saveAll(users);
+        projectRepository.saveAll(projects);
+        promptRepository.saveAll(prompts);
     }
 
     private void setAuditableBy(Object object, User auditableBy){
         if (object instanceof BaseEntity entity) {
             entity.setCreatedBy(auditableBy);
-
-            if(entity.getModifiedAt() != null){
-                entity.setModifiedBy(auditableBy);
-            }
-
-            if(entity.getDeletedAt() != null){
-                entity.setDeletedBy(auditableBy);
-            }
+            entity.setModifiedBy(auditableBy);
         }
     }
 }

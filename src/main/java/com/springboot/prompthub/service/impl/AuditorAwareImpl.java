@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.springboot.prompthub.entity.User;
 
 public class AuditorAwareImpl implements AuditorAware<User> {
-
     @Override
     public Optional<User> getCurrentAuditor() {
 

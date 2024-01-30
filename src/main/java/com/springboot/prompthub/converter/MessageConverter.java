@@ -1,7 +1,8 @@
-package com.springboot.prompthub.entity;
+package com.springboot.prompthub.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springboot.prompthub.entity.Message;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
@@ -16,7 +17,8 @@ public class MessageConverter implements AttributeConverter<List<Message>, Strin
     public String convertToDatabaseColumn(List<Message> messages) {
         try {
             return objectMapper.writeValueAsString(messages);
-        } catch (JsonProcessingException e) {
+        }
+        catch (JsonProcessingException e) {
             return null;
         }
     }
@@ -29,7 +31,8 @@ public class MessageConverter implements AttributeConverter<List<Message>, Strin
                     objectMapper
                             .getTypeFactory()
                             .constructCollectionType(List.class, Message.class));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return null;
         }
     }

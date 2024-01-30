@@ -19,13 +19,14 @@ public class DataFactory {
     public DataFactory(Faker faker){
         this.faker = faker;
     }
+
     public List<User> generateUsers(int n){
         return IntStream.rangeClosed(1, n)
                 .mapToObj(i -> {
                     User user = new User();
+                    user.setId(UUID.randomUUID().toString());
                     user.setEmail(faker.internet().emailAddress());
                     user.setPassword(Constant.DEFAULT_USER_PASSWORD);
-                    setAuditableDummyData(user);
 
                     return user;
                 })
@@ -36,9 +37,9 @@ public class DataFactory {
         return IntStream.rangeClosed(1, n)
                 .mapToObj(i -> {
                     Project project = new Project();
+                    project.setId(UUID.randomUUID().toString());
                     project.setName(faker.lorem().characters(0, 128, true));
                     project.setDescription(faker.lorem().characters(0, 256, true));
-                    setAuditableDummyData(project);
 
                     return project;
                 })
@@ -49,12 +50,12 @@ public class DataFactory {
         return IntStream.rangeClosed(1, n)
                 .mapToObj(i -> {
                     Prompt prompt = new Prompt();
+                    prompt.setId(UUID.randomUUID().toString());
                     prompt.setName(faker.lorem().characters(0, 128, true));
                     prompt.setDescription(faker.lorem().characters(0, 256, true));
                     prompt.setModel(Constant.LM_MODELS[faker.random().nextInt(0, Constant.LM_MODELS.length - 1)]);
                     prompt.setTokens(faker.random().nextInt(13, 16000));
                     prompt.setMessages(generateMessages(faker.random().nextInt(0, 10)));
-                    setAuditableDummyData(prompt);
 
                     return prompt;
                 })
@@ -71,25 +72,5 @@ public class DataFactory {
                     return message;
                 })
                 .collect(Collectors.toList());
-    }
-
-    private void setAuditableDummyData(Object object){
-        if (object instanceof BaseEntity entity) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.YEAR, -1);
-            Date start = calendar.getTime();
-            Date end = new Date();
-
-            entity.setId(UUID.randomUUID().toString());
-            entity.setCreatedAt(faker.date().between(start, end));
-
-            if(faker.random().nextInt(0, 1) == 1){
-                entity.setModifiedAt(faker.date().between(start, end));
-            }
-
-            if(faker.random().nextInt(0, 1) == 1){
-                entity.setDeletedAt(faker.date().between(start, end));
-            }
-        }
     }
 }
