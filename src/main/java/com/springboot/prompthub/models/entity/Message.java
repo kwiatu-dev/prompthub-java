@@ -1,4 +1,4 @@
-package com.springboot.prompthub.entity;
+package com.springboot.prompthub.models.entity;
 
 import lombok.Data;
 

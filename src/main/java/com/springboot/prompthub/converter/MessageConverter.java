@@ -2,7 +2,7 @@ package com.springboot.prompthub.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.prompthub.entity.Message;
+import com.springboot.prompthub.models.entity.Message;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

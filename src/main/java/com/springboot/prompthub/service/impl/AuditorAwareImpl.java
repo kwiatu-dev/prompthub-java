@@ -5,7 +5,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import com.springboot.prompthub.entity.User;
+import com.springboot.prompthub.models.entity.User;
 
 public class AuditorAwareImpl implements AuditorAware<User> {
     @Override

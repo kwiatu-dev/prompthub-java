@@ -1,17 +1,12 @@
-package com.springboot.prompthub.entity;
+package com.springboot.prompthub.models.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 
 import com.springboot.prompthub.converter.SoftDeleteTypeConverter;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.annotations.SoftDeleteType;
 import org.hibernate.annotations.UuidGenerator;

@@ -47,6 +47,7 @@ CREATE TABLE `prompt` (
 
 ALTER TABLE `user`
     ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`),
     ADD KEY `FKdltbr5t0nljpuuo4isxgslt82` (`created_by`),
     ADD KEY `FKsqpewmuv3ia5tdi2a3kxg9tr9` (`deleted_by`),
     ADD KEY `FKo4omy56oktgee21ndp4c7vkkb` (`modified_by`);

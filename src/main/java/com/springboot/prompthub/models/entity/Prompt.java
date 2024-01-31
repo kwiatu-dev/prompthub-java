@@ -1,14 +1,11 @@
-package com.springboot.prompthub.entity;
+package com.springboot.prompthub.models.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Type;
 
-import java.io.IOException;
 import java.util.List;
 
 @Entity

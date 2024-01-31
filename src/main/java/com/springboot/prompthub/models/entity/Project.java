@@ -1,12 +1,9 @@
-package com.springboot.prompthub.entity;
+package com.springboot.prompthub.models.entity;
 
 import java.util.List;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

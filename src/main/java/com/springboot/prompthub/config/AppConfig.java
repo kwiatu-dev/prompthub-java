@@ -1,7 +1,7 @@
 package com.springboot.prompthub.config;
 
 import com.github.javafaker.Faker;
-import com.springboot.prompthub.entity.User;
+import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.service.impl.AuditorAwareImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

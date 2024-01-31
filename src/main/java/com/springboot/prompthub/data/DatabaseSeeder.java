@@ -1,18 +1,15 @@
 package com.springboot.prompthub.data;
 
-import com.springboot.prompthub.constant.Constant;
-import com.springboot.prompthub.entity.BaseEntity;
-import com.springboot.prompthub.entity.Project;
-import com.springboot.prompthub.entity.Prompt;
-import com.springboot.prompthub.entity.User;
+import com.springboot.prompthub.utils.AppConstant;
+import com.springboot.prompthub.models.entity.*;
 import com.springboot.prompthub.repository.ProjectRepository;
 import com.springboot.prompthub.repository.PromptRepository;
 import com.springboot.prompthub.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
@@ -21,15 +18,19 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final ProjectRepository projectRepository;
     private final PromptRepository promptRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     public DatabaseSeeder(
             DataFactory dataFactory,
             UserRepository userRepository,
             ProjectRepository projectRepository,
-            PromptRepository promptRepository) {
+            PromptRepository promptRepository,
+            PasswordEncoder passwordEncoder) {
         this.dataFactory = dataFactory;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.promptRepository = promptRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,12 +40,30 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         Random random = new Random();
 
+        Role roleAdmin = new Role();
+        roleAdmin.setId(UUID.randomUUID().toString());
+        roleAdmin.setName(AppConstant.ROLE_ADMIN);
+        Set<Role> rolesForAdmin = new HashSet<>();
+        rolesForAdmin.add(roleAdmin);
+
+        Role roleUser = new Role();
+        roleUser.setId(UUID.randomUUID().toString());
+        roleUser.setName(AppConstant.ROLE_USER);
+        Set<Role> rolesForUser = new HashSet<>();
+        rolesForUser.add(roleUser);
+
         User admin = new User();
-        admin.setEmail(Constant.DEFAULT_ADMIN_EMAIL);
-        admin.setPassword(Constant.DEFAULT_ADMIN_PASSWORD);
+        admin.setEmail(AppConstant.DEFAULT_ADMIN_EMAIL);
+        admin.setPassword(passwordEncoder.encode(AppConstant.DEFAULT_ADMIN_PASSWORD));
+        admin.setRoles(rolesForAdmin);
 
         List<User> users = dataFactory.generateUsers(10);
-        users.forEach(user -> setAuditableBy(user, admin));
+
+        users.forEach(user -> {
+            user.setRoles(rolesForUser);
+            setAuditableBy(user, admin);
+        });
+
         users.add(admin);
 
         List<Project> projects = dataFactory.generateProjects(10);
