@@ -5,7 +5,6 @@ import com.springboot.prompthub.models.entity.Role;
 import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.models.request.LoginRequest;
 import com.springboot.prompthub.models.request.RegisterRequest;
-import com.springboot.prompthub.models.response.LoginResponse;
 import com.springboot.prompthub.models.response.UserResponse;
 import com.springboot.prompthub.models.result.LoginResult;
 import com.springboot.prompthub.models.result.RegisterResult;
@@ -14,16 +13,17 @@ import com.springboot.prompthub.repository.UserRepository;
 import com.springboot.prompthub.security.JwtTokenProvider;
 import com.springboot.prompthub.service.AuthService;
 import com.springboot.prompthub.utils.AppConstant;
-import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -49,30 +49,32 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResult login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+
+            if(authentication.isAuthenticated()) {
+                String accessToken = jwtTokenProvider.generateToken(authentication);
+
+                UserResponse userResponse = new UserResponse(
+                        authentication.getName(),
+                        authentication.getAuthorities().stream().map(role -> role.getAuthority()).collect(Collectors.toList())
+                );
+
+                return new LoginResult(
+                        accessToken,
+                        userResponse,
+                        AppConstant.MESSAGE_API_USER_LOGGED_IN_SUCCESSFUL
+                );
+            }
+        }
+        catch(AuthenticationException ignored) { }
+
+        throw new APIException(
+                HttpStatus.BAD_REQUEST,
+                AppConstant.ERROR_API_INVALID_USERNAME_OR_PASSWORD
         );
-
-        if(authentication.isAuthenticated()) {
-            String accessToken = jwtTokenProvider.generateToken(authentication);
-            User user = (User) authentication.getPrincipal();
-
-            UserResponse userResponse = new UserResponse(
-                user.getEmail(), user.getRoles()
-            );
-
-            return new LoginResult(
-                accessToken,
-                userResponse,
-                AppConstant.MESSAGE_API_USER_LOGGED_IN_SUCCESSFUL
-            );
-        }
-        else {
-            throw new APIException(
-                    HttpStatus.BAD_REQUEST,
-                    AppConstant.ERROR_API_INVALID_USERNAME_OR_PASSWORD
-            );
-        }
     }
 
     @Override

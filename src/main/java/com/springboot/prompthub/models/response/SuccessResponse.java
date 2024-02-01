@@ -11,6 +11,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class SuccessResponse {
     private int statusCode = HttpStatus.OK.value();
-    private static final String status = "Success";
+    private final String status = "Success";
     private String message = AppConstant.MESSAGE_API_DEFAULT_MESSAGE;
+
+    public SuccessResponse(String message){
+        this.message = message;
+    }
 }

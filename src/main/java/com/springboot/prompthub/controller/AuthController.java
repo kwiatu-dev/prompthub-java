@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(AppConstant.API_VERSION + "auth")
+@RequestMapping(AppConstant.API_VERSION + "/auth")
 public class AuthController {
     private final AuthService authService;
 
@@ -24,11 +24,13 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(value = { "login", "signin" })
+    @PostMapping(value = { "/login", "/signin" })
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResult loginResult = authService.login(request);
 
         //todo:response with httpOnly cookie with refresh token
+        //https://medium.com/spring-boot/cookie-based-jwt-authentication-with-spring-security-756f70664673
+        //https://github.com/bezkoder/spring-security-refresh-token-jwt
 
         return new ResponseEntity<>(new LoginResponse(
                 loginResult.getUserResponse(),
@@ -37,7 +39,7 @@ public class AuthController {
         ), HttpStatus.OK);
     }
 
-    @PostMapping(value = { "register", "signup" })
+    @PostMapping(value = { "/register", "/signup" })
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
         RegisterResult registerResult = authService.register(request);
 

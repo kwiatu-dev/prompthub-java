@@ -9,6 +9,8 @@ import org.hibernate.annotations.UuidGenerator;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "roles")
 public class Role{
     @Id
@@ -17,4 +19,8 @@ public class Role{
 
     @Column(name = "name")
     private String name;
+
+    public Role(String name){
+        this.name = name;
+    }
 }

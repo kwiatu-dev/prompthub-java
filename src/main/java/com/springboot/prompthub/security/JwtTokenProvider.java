@@ -25,15 +25,15 @@ public class JwtTokenProvider {
     private long jwtExpirationDate;
 
     public String generateToken(Authentication authentication){
-        String email = authentication.getName();
-
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
         Claims claims = Jwts.claims()
-                .subject(email)
+                .subject(authentication.getName())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
+                .notBefore(currentDate)
+                .add("authorities", authentication.getAuthorities())
                 .build();
 
         return Jwts.builder()
