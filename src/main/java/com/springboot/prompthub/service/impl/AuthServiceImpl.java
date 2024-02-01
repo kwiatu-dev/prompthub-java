@@ -121,64 +121,56 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public RefreshTokenResult refreshToken(String refreshTokenUUID) {
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(refreshTokenUUID);
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenUUID)
+                .orElseThrow(() -> new APIException(
+                        HttpStatus.BAD_REQUEST,
+                        AppConstant.ERROR_REFRESH_TOKEN_NOT_EXIST));
 
-        if(refreshToken.isPresent()) {
-            if(refreshToken.get().isRevoked()) {
-                refreshTokenProvider.revokeDescendantRefreshTokens(refreshToken.get());
-            }
 
-            if(refreshToken.get().isActive()) {
-                Authentication authentication = authenticationFacade.getAuthentication();
-                String accessToken = jwtTokenProvider.generateToken(authentication);
-                RefreshToken newRefreshToken = refreshTokenProvider.rotateRefreshToken(refreshToken.get());
-
-                User user = userRepository.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new APIException(
-                                HttpStatus.BAD_REQUEST,
-                                AppConstant.ERROR_API_USER_NOT_FOUND));
-
-                refreshTokenProvider.removeObsoleteRefreshTokens(user);
-
-                UserResponse userResponse = new UserResponse(
-                        user.getEmail(),
-                        user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toList())
-                );
-
-                return new RefreshTokenResult(
-                        accessToken,
-                        newRefreshToken.getToken(),
-                        userResponse,
-                        AppConstant.MESSAGE_REFRESH_TOKEN_ROTATED_SUCCESSFUL
-                );
-            }
+        if(refreshToken.isRevoked()) {
+            refreshTokenProvider.revokeDescendantRefreshTokens(refreshToken);
         }
 
-        throw new APIException(
-                HttpStatus.BAD_REQUEST,
-                AppConstant.ERROR_REFRESH_TOKEN_NOT_EXIST
+
+        Authentication authentication = authenticationFacade.getAuthentication();
+        String accessToken = jwtTokenProvider.generateToken(authentication);
+        RefreshToken newRefreshToken = refreshTokenProvider.rotateRefreshToken(refreshToken);
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new APIException(
+                        HttpStatus.BAD_REQUEST,
+                        AppConstant.ERROR_API_USER_NOT_FOUND));
+
+        refreshTokenProvider.removeObsoleteRefreshTokens(user);
+
+        UserResponse userResponse = new UserResponse(
+                user.getEmail(),
+                user.getRoles().stream()
+                        .map(role -> role.getName())
+                        .collect(Collectors.toList())
+        );
+
+        return new RefreshTokenResult(
+                accessToken,
+                newRefreshToken.getToken(),
+                userResponse,
+                AppConstant.MESSAGE_REFRESH_TOKEN_ROTATED_SUCCESSFUL
         );
     }
 
     @Override
     public LogoutResult logout(String refreshTokenUUID) {
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(refreshTokenUUID);
-
-        if(refreshToken.isPresent()) {
-            refreshTokenProvider.revokeRefreshToken(
-                    refreshToken.get(),
-                    null,
-                    AppConstant.MESSAGE_REFRESH_TOKEN_USER_LOGOUT);
-
-            return new LogoutResult(
-                    AppConstant.MESSAGE_API_USER_LOGOUT
-            );
-
-        }
-
-        throw new APIException(
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenUUID)
+                .orElseThrow(() -> new APIException(
                 HttpStatus.BAD_REQUEST,
-                AppConstant.ERROR_REFRESH_TOKEN_NOT_EXIST
-        );
+                AppConstant.ERROR_REFRESH_TOKEN_NOT_EXIST));
+
+        refreshTokenProvider.revokeRefreshToken(
+                refreshToken,
+                null,
+                AppConstant.MESSAGE_REFRESH_TOKEN_USER_LOGOUT);
+
+        return new LogoutResult(
+                AppConstant.MESSAGE_API_USER_LOGOUT);
     }
 }
