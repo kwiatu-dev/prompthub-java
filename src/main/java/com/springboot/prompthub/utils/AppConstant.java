@@ -22,4 +22,13 @@ public class AppConstant {
     public static final String MESSAGE_API_DEFAULT_MESSAGE = "The request was completed successfully.";
     public static final String MESSAGE_API_USER_LOGGED_IN_SUCCESSFUL = "User logged in successful";
     public static final String MESSAGE_API_USER_CREATED_SUCCESSFUL = "User created successful";
+    public static final String MESSAGE_REFRESH_TOKEN_ROTATE = "Rotate refresh token.";
+    public static final String ERROR_REFRESH_TOKEN_REVOKE_FAILED = "The refresh token could not be revoked.";
+    public static final String MESSAGE_REFRESH_TOKEN_REUSE_REVOKED_TOKEN = "Attempted reuse of revoked ancestor refresh token.";
+    public static final String ERROR_REFRESH_TOKEN_ROTATE_FAILED = "The refresh token could not be rotate.";
+    public static final String ERROR_REFRESH_TOKEN_NOT_EXIST = "The refresh token not exist";
+    public static final String MESSAGE_REFRESH_TOKEN_USER_LOGOUT = "User logged out";
+    public static final String MESSAGE_API_USER_LOGOUT = "User logged out";
+    public static final String ERROR_REFRESH_TOKEN_COOKIE_EMPTY_OR_NULL = "The refresh token cookie is empty or null.";
+    public static final String MESSAGE_REFRESH_TOKEN_ROTATED_SUCCESSFUL = "Refresh token rotated successful";
 }

@@ -8,9 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LoginResult {
+@AllArgsConstructor
+public class RefreshTokenResult {
     private String accessToken;
     private String refreshToken;
     private UserResponse userResponse;

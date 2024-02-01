@@ -17,6 +17,5 @@ public class Project extends BaseEntity {
     private String description;
 
     @OneToMany(mappedBy = "project")
-    @Column(name = "prompts", nullable = true)
     private List<Prompt> prompts;
 }
