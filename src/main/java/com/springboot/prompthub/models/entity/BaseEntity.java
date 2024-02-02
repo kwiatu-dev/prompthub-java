@@ -22,7 +22,7 @@ public class BaseEntity implements Serializable {
     @UuidGenerator
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @CreatedBy
     @JoinColumn(name = "created_by")
     private User createdBy;
@@ -31,7 +31,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @LastModifiedBy
     @JoinColumn(name = "modified_by")
     private User modifiedBy;
@@ -40,7 +40,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "modified_at")
     private Date modifiedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "deleted_by")
     private User deletedBy;
 

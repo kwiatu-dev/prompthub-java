@@ -65,7 +65,6 @@ public class AuthController {
         ), HttpStatus.OK);
     }
 
-    //todo: ustawić oba poniższe endpointy na wymagana autoryzację
     @GetMapping("refresh/token")
     public ResponseEntity<RefreshTokenResponse> refreshToken(
             HttpServletRequest request,

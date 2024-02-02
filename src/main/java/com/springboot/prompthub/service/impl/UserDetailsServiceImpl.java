@@ -4,6 +4,7 @@ import com.springboot.prompthub.exception.APIException;
 import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.repository.UserRepository;
 import com.springboot.prompthub.utils.AppConstant;
+import com.springboot.prompthub.utils.UserPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,8 +38,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                user.getPassword(),
-                authorities);
+        return new UserPrincipal(user);
     }
 }

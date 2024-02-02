@@ -19,6 +19,7 @@ import com.springboot.prompthub.security.JwtTokenProvider;
 import com.springboot.prompthub.security.RefreshTokenProvider;
 import com.springboot.prompthub.service.AuthService;
 import com.springboot.prompthub.utils.AppConstant;
+import com.springboot.prompthub.utils.UserPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
             );
 
             if(authentication.isAuthenticated()) {
-                User user = getUserByAuthentication(authentication);
+                User user = ((UserPrincipal) authentication.getPrincipal()).getUser();
                 String accessToken = jwtTokenProvider.generateToken(user);
                 RefreshToken refreshToken = refreshTokenProvider.createRefreshToken(user);
 
@@ -107,6 +109,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = new User();
+        user.setId(UUID.randomUUID().toString());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
@@ -168,19 +171,5 @@ public class AuthServiceImpl implements AuthService {
 
         return new LogoutResult(
                 AppConstant.MESSAGE_API_USER_LOGOUT);
-    }
-
-    private User getUserByAuthentication(Authentication authentication) {
-        if(authentication.isAuthenticated()) {
-            return userRepository.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new APIException(
-                            HttpStatus.BAD_REQUEST,
-                            AppConstant.ERROR_API_USER_NOT_FOUND));
-        }
-        else {
-            throw new APIException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    AppConstant.ERROR_API_AUTHENTICATION_REQUIRED);
-        }
     }
 }
