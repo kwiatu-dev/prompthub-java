@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.springboot.prompthub.converter.SoftDeleteTypeConverter;
+import com.springboot.prompthub.utils.UserPrincipal;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.SoftDeleteType;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @EntityListeners(AuditingEntityListener.class)
 @Data
@@ -50,7 +53,12 @@ public class BaseEntity implements Serializable {
     @PreRemove
     public void deleteEntity(){
         deletedAt = new Date();
-        //todo: uzupełnić informacje o aktualnie zalogowanego użytkownika
-        //deletedBy =
+        //todo: sprawdzić czy działa uzupełnianie informacji
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
+            User user = userPrincipal.getUser();
+            deletedBy = user;
+        }
     }
 }
