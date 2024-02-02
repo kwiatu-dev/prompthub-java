@@ -51,9 +51,8 @@ public class BaseEntity implements Serializable {
     private Date deletedAt;
 
     @PreRemove
-    public void deleteEntity(){
+    public void deleteEntity() {
         deletedAt = new Date();
-        //todo: sprawdzić czy działa uzupełnianie informacji
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
