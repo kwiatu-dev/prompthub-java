@@ -71,13 +71,15 @@ public class AuthServiceImpl implements AuthService {
             );
 
             if(authentication.isAuthenticated()) {
-                String accessToken = jwtTokenProvider.generateToken(authentication);
-                RefreshToken refreshToken = refreshTokenProvider.createRefreshToken();
+                User user = getUserByAuthentication(authentication);
+                String accessToken = jwtTokenProvider.generateToken(user);
+                RefreshToken refreshToken = refreshTokenProvider.createRefreshToken(user);
 
                 UserResponse userResponse = new UserResponse(
-                        authentication.getName(),
-                        authentication.getAuthorities().stream().map(role -> role.getAuthority()).collect(Collectors.toList())
-                );
+                        user.getEmail(),
+                        user.getRoles().stream()
+                                .map(role -> role.getName())
+                                .collect(Collectors.toList()));
 
                 return new LoginResult(
                         accessToken,
@@ -108,12 +110,15 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Role userRole = roleRepository.findByName(AppConstant.ROLE_USER).get();
+        Role userRole = roleRepository.findByName(AppConstant.ROLE_USER)
+                .orElseThrow(() -> new APIException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        AppConstant.ERROR_API_ROLE_NOT_EXIST
+                ));
+
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
-
         user.setRoles(roles);
-
         userRepository.save(user);
 
         return new RegisterResult(AppConstant.MESSAGE_API_USER_CREATED_SUCCESSFUL);
@@ -131,24 +136,15 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenProvider.revokeDescendantRefreshTokens(refreshToken);
         }
 
-
-        Authentication authentication = authenticationFacade.getAuthentication();
-        String accessToken = jwtTokenProvider.generateToken(authentication);
+        String accessToken = jwtTokenProvider.generateToken(refreshToken.getUser());
         RefreshToken newRefreshToken = refreshTokenProvider.rotateRefreshToken(refreshToken);
-
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new APIException(
-                        HttpStatus.BAD_REQUEST,
-                        AppConstant.ERROR_API_USER_NOT_FOUND));
-
-        refreshTokenProvider.removeObsoleteRefreshTokens(user);
+        refreshTokenProvider.removeObsoleteRefreshTokens(refreshToken.getUser());
 
         UserResponse userResponse = new UserResponse(
-                user.getEmail(),
-                user.getRoles().stream()
+                refreshToken.getUser().getEmail(),
+                refreshToken.getUser().getRoles().stream()
                         .map(role -> role.getName())
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
 
         return new RefreshTokenResult(
                 accessToken,
@@ -172,5 +168,19 @@ public class AuthServiceImpl implements AuthService {
 
         return new LogoutResult(
                 AppConstant.MESSAGE_API_USER_LOGOUT);
+    }
+
+    private User getUserByAuthentication(Authentication authentication) {
+        if(authentication.isAuthenticated()) {
+            return userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new APIException(
+                            HttpStatus.BAD_REQUEST,
+                            AppConstant.ERROR_API_USER_NOT_FOUND));
+        }
+        else {
+            throw new APIException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    AppConstant.ERROR_API_AUTHENTICATION_REQUIRED);
+        }
     }
 }

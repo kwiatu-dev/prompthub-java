@@ -23,8 +23,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(AppConstant.API_VERSION + "/auth")
 public class AuthController {
@@ -48,7 +46,7 @@ public class AuthController {
         LoginResult loginResult = authService.login(request);
 
         setRefreshTokenCookie(response,
-                loginResult.getRefreshToken(),
+                loginResult.getRefreshTokenUUID(),
                 refreshTokenExpiration / 1000);
 
         return new ResponseEntity<>(new LoginResponse(
@@ -77,7 +75,7 @@ public class AuthController {
         RefreshTokenResult refreshTokenResult = authService.refreshToken(refreshTokenUUID);
 
         setRefreshTokenCookie(response,
-                refreshTokenResult.getRefreshToken(),
+                refreshTokenResult.getRefreshTokenUUID(),
                 refreshTokenExpiration / 1000);
 
         return new ResponseEntity<>(new RefreshTokenResponse(
@@ -87,7 +85,7 @@ public class AuthController {
         ), HttpStatus.OK);
     }
 
-    @GetMapping("logout")
+    @DeleteMapping("logout")
     public ResponseEntity<SuccessResponse> logout(
             HttpServletRequest request,
             HttpServletResponse response) {
@@ -96,7 +94,7 @@ public class AuthController {
         LogoutResult logoutResult = authService.logout(refreshTokenUUID);
 
         setRefreshTokenCookie(response,
-                null,
+                "",
                 0);
 
         return new ResponseEntity<>(new SuccessResponse(
@@ -109,7 +107,7 @@ public class AuthController {
             String refreshTokenUUID,
             long refreshTokenExpiration) {
 
-        if(refreshTokenUUID != null) {
+        if(refreshTokenUUID != null){
             ResponseCookie refreshTokenCookie = ResponseCookie.from(
                             refreshTokenCookieName,
                             refreshTokenUUID)
@@ -124,7 +122,6 @@ public class AuthController {
                     HttpHeaders.SET_COOKIE,
                     refreshTokenCookie.toString());
         }
-
     }
 
     private String getRefreshTokenCookie(HttpServletRequest request) {

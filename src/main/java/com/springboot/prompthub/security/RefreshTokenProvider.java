@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class RefreshTokenProvider {
@@ -29,7 +30,7 @@ public class RefreshTokenProvider {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public RefreshToken createRefreshToken() {
+    public RefreshToken createRefreshToken(User user) {
         Date now = new Date();
 
         RefreshToken refreshToken = RefreshToken.builder()
@@ -37,6 +38,7 @@ public class RefreshTokenProvider {
                 .token(getUniqueRefreshTokenUUID())
                 .expires(new Date(now.getTime() + refreshTokenExpiration))
                 .createdAt(now)
+                .user(user)
                 .build();
 
         refreshTokenRepository.save(refreshToken);
@@ -65,16 +67,17 @@ public class RefreshTokenProvider {
             refreshToken.setReasonRevoked(reasonRevoked);
             refreshTokenRepository.save(refreshToken);
         }
-
-        throw new APIException(
-                HttpStatus.BAD_REQUEST,
-                AppConstant.ERROR_REFRESH_TOKEN_REVOKE_FAILED
-        );
+        else{
+            throw new APIException(
+                    HttpStatus.BAD_REQUEST,
+                    AppConstant.ERROR_REFRESH_TOKEN_REVOKE_FAILED
+            );
+        }
     }
 
     public RefreshToken rotateRefreshToken(RefreshToken refreshToken) {
         if(refreshToken.isActive()){
-            RefreshToken newRefreshToken = createRefreshToken();
+            RefreshToken newRefreshToken = createRefreshToken(refreshToken.getUser());
 
             revokeRefreshToken(
                     refreshToken,
@@ -96,8 +99,12 @@ public class RefreshTokenProvider {
         List<RefreshToken> refreshTokens = refreshTokenRepository.findAllByUser(user);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -refreshTokenTTL);
-        refreshTokens.removeIf(rt -> rt.getCreatedAt().before(calendar.getTime()));
-        refreshTokenRepository.deleteAll(refreshTokens);
+
+        List<RefreshToken> obsoleteRefreshTokens = refreshTokens.stream()
+                        .filter(rt -> rt.getCreatedAt().before(calendar.getTime()))
+                        .toList();
+
+        refreshTokenRepository.deleteAll(obsoleteRefreshTokens);
     }
 
     public void revokeDescendantRefreshTokens(RefreshToken refreshToken) {

@@ -1,6 +1,7 @@
 package com.springboot.prompthub.security;
 
 import com.springboot.prompthub.exception.APIException;
+import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.utils.AppConstant;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -24,16 +25,16 @@ public class JwtTokenProvider {
     @Value("${app-jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
 
-    public String generateToken(Authentication authentication){
+    public String generateToken(User user){
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
         Claims claims = Jwts.claims()
-                .subject(authentication.getName())
+                .subject(user.getEmail())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .notBefore(currentDate)
-                .add("authorities", authentication.getAuthorities())
+                .add("authorities", user.getRoles())
                 .build();
 
         return Jwts.builder()
