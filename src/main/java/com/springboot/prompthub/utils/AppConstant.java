@@ -32,4 +32,5 @@ public class AppConstant {
     public static final String ERROR_REFRESH_TOKEN_COOKIE_EMPTY_OR_NULL = "The refresh token cookie is empty or null.";
     public static final String MESSAGE_REFRESH_TOKEN_ROTATED_SUCCESSFUL = "Refresh token rotated successful.";
     public static final String ERROR_API_ROLE_NOT_EXIST = "Role not exist.";
+    public static final String ERROR_API_SOFT_DELETE_FAIL = "There was a problem when soft deleting entities.";
 }

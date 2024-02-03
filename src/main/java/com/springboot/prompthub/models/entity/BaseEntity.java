@@ -13,6 +13,7 @@ import org.hibernate.annotations.SoftDeleteType;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.orm.hibernate5.HibernateOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -25,7 +26,7 @@ public class BaseEntity implements Serializable {
     @UuidGenerator
     private String id;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @CreatedBy
     @JoinColumn(name = "created_by")
     private User createdBy;
@@ -34,7 +35,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @LastModifiedBy
     @JoinColumn(name = "modified_by")
     private User modifiedBy;
@@ -43,21 +44,10 @@ public class BaseEntity implements Serializable {
     @Column(name = "modified_at")
     private Date modifiedAt;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "deleted_by")
     private User deletedBy;
 
     @Column(name = "deleted_at")
     private Date deletedAt;
-
-    @PreRemove
-    public void deleteEntity() {
-        deletedAt = new Date();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
-            User user = userPrincipal.getUser();
-            deletedBy = user;
-        }
-    }
 }
