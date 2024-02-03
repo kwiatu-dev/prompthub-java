@@ -14,7 +14,6 @@ import com.springboot.prompthub.models.result.RegisterResult;
 import com.springboot.prompthub.repository.RefreshTokenRepository;
 import com.springboot.prompthub.repository.RoleRepository;
 import com.springboot.prompthub.repository.UserRepository;
-import com.springboot.prompthub.security.AuthenticationFacade;
 import com.springboot.prompthub.security.JwtTokenProvider;
 import com.springboot.prompthub.security.RefreshTokenProvider;
 import com.springboot.prompthub.service.AuthService;
@@ -29,7 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,7 +41,6 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenProvider refreshTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final AuthenticationFacade authenticationFacade;
 
     public AuthServiceImpl(
             UserRepository userRepository,
@@ -52,8 +49,7 @@ public class AuthServiceImpl implements AuthService {
             JwtTokenProvider jwtTokenProvider,
             PasswordEncoder passwordEncoder,
             RefreshTokenProvider refreshTokenProvider,
-            RefreshTokenRepository refreshTokenRepository,
-            AuthenticationFacade authenticationFacade) {
+            RefreshTokenRepository refreshTokenRepository) {
 
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -62,7 +58,6 @@ public class AuthServiceImpl implements AuthService {
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenProvider = refreshTokenProvider;
         this.refreshTokenRepository = refreshTokenRepository;
-        this.authenticationFacade = authenticationFacade;
     }
 
     @Override

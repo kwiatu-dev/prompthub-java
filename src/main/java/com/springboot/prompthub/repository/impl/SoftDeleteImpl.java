@@ -2,7 +2,9 @@ package com.springboot.prompthub.repository.impl;
 
 import com.springboot.prompthub.exception.APIException;
 import com.springboot.prompthub.models.entity.BaseEntity;
+import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.repository.SoftDelete;
+import com.springboot.prompthub.service.impl.AuthenticationService;
 import com.springboot.prompthub.utils.AppConstant;
 import com.springboot.prompthub.utils.ApplicationContextProvider;
 import com.springboot.prompthub.utils.UserPrincipal;
@@ -22,29 +24,31 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class SoftDeleteImpl implements SoftDelete {
-    @PersistenceContext
-    private EntityManager entityManager;
     private final ApplicationContext applicationContext;
+    private final AuthenticationService authenticationService;
 
-    public SoftDeleteImpl(ApplicationContext applicationContext) {
+    public SoftDeleteImpl(
+            ApplicationContext applicationContext,
+            AuthenticationService authenticationService) {
+
         this.applicationContext = applicationContext;
+        this.authenticationService = authenticationService;
     }
 
-    @Transactional
     public void softDelete(BaseEntity baseEntity) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = authenticationService.getAuthenticatedUser();
         baseEntity.setDeletedAt(new Date());
 
-        if(authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
-            baseEntity.setDeletedBy(userPrincipal.getUser());
+        if(user != null){
+            baseEntity.setDeletedBy(user);
         }
 
         try{
             JpaRepository repository = applicationContext.getBean(baseEntity.getClass().getSimpleName() + "Repository", JpaRepository.class);
-            entityManager.merge(baseEntity);
-            entityManager.flush();
+            repository.save(baseEntity);
             repository.delete(baseEntity);
         }
         catch(Exception ex) {
