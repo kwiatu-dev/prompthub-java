@@ -32,8 +32,8 @@ public class AppConfig {
     @Bean
     ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        //objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+        //objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         return objectMapper;
     }

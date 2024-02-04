@@ -54,7 +54,7 @@ public class PromptServiceImpl implements PromptService {
     }
 
     @Override
-    public void createPrompt(CreatePromptRequest request, String projectId) {
+    public Prompt createPrompt(CreatePromptRequest request, String projectId) {
         Project project = projectService.getProject(projectId);
 
         Prompt prompt = new Prompt();
@@ -64,10 +64,12 @@ public class PromptServiceImpl implements PromptService {
         prompt.setModel(AppConstant.LM_DEFAULT_MODEL);
 
         promptRepository.save(prompt);
+
+        return prompt;
     }
 
     @Override
-    public void updatePrompt(
+    public Prompt updatePrompt(
             UpdatePromptRequest request,
             String projectId,
             String promptId) {
@@ -82,6 +84,8 @@ public class PromptServiceImpl implements PromptService {
         prompt.setMessages(request.getMessages());
 
         promptRepository.save(prompt);
+
+        return prompt;
     }
 
     @Override

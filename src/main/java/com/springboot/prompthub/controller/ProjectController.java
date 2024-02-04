@@ -49,20 +49,20 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<SuccessResponse> createProject(@RequestBody CreateProjectRequest request) {
-        projectService.createProject(request);
+    public ResponseEntity<ProjectResponse> createProject(@RequestBody CreateProjectRequest request) {
+        Project project = projectService.createProject(request);
 
         return new ResponseEntity<>(
-                new SuccessResponse(),
-                HttpStatus.OK);
+                responseGeneratorService.mapToDTO(project),
+                HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<SuccessResponse> updateProject(@RequestBody UpdateProjectRequest request, @PathVariable("id") String projectId) {
-        projectService.updateProject(request, projectId);
+    public ResponseEntity<ProjectResponse> updateProject(@RequestBody UpdateProjectRequest request, @PathVariable("id") String projectId) {
+        Project project = projectService.updateProject(request, projectId);
 
         return new ResponseEntity<>(
-                new SuccessResponse(),
+                responseGeneratorService.mapToDTO(project),
                 HttpStatus.OK);
     }
 

@@ -11,9 +11,9 @@ public interface PromptService {
 
     Prompt getPrompt(String projectId, String promptId);
 
-    void createPrompt(CreatePromptRequest request, String projectId);
+    Prompt createPrompt(CreatePromptRequest request, String projectId);
 
-    void updatePrompt(
+    Prompt updatePrompt(
             UpdatePromptRequest request,
             String projectId,
             String promptId);

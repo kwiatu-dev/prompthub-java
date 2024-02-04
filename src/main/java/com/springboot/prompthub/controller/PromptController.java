@@ -1,5 +1,6 @@
 package com.springboot.prompthub.controller;
 
+import com.springboot.prompthub.models.entity.Project;
 import com.springboot.prompthub.models.entity.Prompt;
 import com.springboot.prompthub.models.request.CreatePromptRequest;
 import com.springboot.prompthub.models.request.UpdatePromptRequest;
@@ -52,27 +53,27 @@ public class PromptController {
     }
 
     @PostMapping("prompts")
-    public ResponseEntity<SuccessResponse> createPrompt(
+    public ResponseEntity<PromptResponse> createPrompt(
             @RequestBody CreatePromptRequest request,
             @PathVariable("projectId") String projectId) {
 
-        promptService.createPrompt(request, projectId);
+        Prompt prompt = promptService.createPrompt(request, projectId);
 
         return new ResponseEntity<>(
-                new SuccessResponse(),
-                HttpStatus.OK);
+                responseGeneratorService.mapToDTO(prompt),
+                HttpStatus.CREATED);
     }
 
     @PutMapping("prompts/{promptId}")
-    public ResponseEntity<SuccessResponse> updatePrompt(
+    public ResponseEntity<PromptResponse> updatePrompt(
             @RequestBody UpdatePromptRequest request,
             @PathVariable("projectId") String projectId,
             @PathVariable("promptId") String promptId) {
 
-        promptService.updatePrompt(request, projectId, promptId);
+        Prompt prompt = promptService.updatePrompt(request, projectId, promptId);
 
         return new ResponseEntity<>(
-                new SuccessResponse(),
+                responseGeneratorService.mapToDTO(prompt),
                 HttpStatus.OK);
     }
 

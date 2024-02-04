@@ -44,20 +44,24 @@ public class ProjectServiceImpl implements ProjectService {
                         AppConstant.ERROR_API_PROJECT_NOT_FOUND));
     }
 
-    public void createProject(CreateProjectRequest request) {
+    public Project createProject(CreateProjectRequest request) {
         Project project = new Project();
         project.setName(request.getName());
         project.setDescription(request.getDescription());
 
         projectRepository.save(project);
+
+        return project;
     }
 
-    public void updateProject(UpdateProjectRequest request, String projectId) {
+    public Project updateProject(UpdateProjectRequest request, String projectId) {
         Project project = getProject(projectId);
         project.setName(request.getName());
         project.setDescription(request.getDescription());
 
         projectRepository.save(project);
+
+        return project;
     }
 
     public void deleteProject(String projectId) {

@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Prompt extends BaseEntity {
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id", nullable = false)
     @JsonBackReference
     private Project project;

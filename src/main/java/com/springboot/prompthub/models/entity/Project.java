@@ -21,7 +21,7 @@ public class Project extends BaseEntity {
     @Column(name = "description", nullable = false, length = 256)
     private String description;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Prompt> prompts;
 }
