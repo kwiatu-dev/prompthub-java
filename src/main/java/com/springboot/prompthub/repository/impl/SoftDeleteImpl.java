@@ -6,25 +6,11 @@ import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.repository.SoftDelete;
 import com.springboot.prompthub.service.impl.AuthenticationService;
 import com.springboot.prompthub.utils.AppConstant;
-import com.springboot.prompthub.utils.ApplicationContextProvider;
-import com.springboot.prompthub.utils.UserPrincipal;
-import jakarta.persistence.*;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Optional;
 
 public class SoftDeleteImpl implements SoftDelete {
     private final ApplicationContext applicationContext;
@@ -48,6 +34,7 @@ public class SoftDeleteImpl implements SoftDelete {
 
         try{
             JpaRepository repository = applicationContext.getBean(baseEntity.getClass().getSimpleName() + "Repository", JpaRepository.class);
+            //todo: zapisać zmiany w bazie danych bez wykonywania wydarzeń z AuditingEntityListener.class
             repository.save(baseEntity);
             repository.delete(baseEntity);
         }

@@ -1,11 +1,13 @@
 package com.springboot.prompthub.utils;
 
 public class AppConstant {
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DEFAULT_ADMIN_EMAIL = "fi.kwiatkowski@gmail.com";
     public static final String DEFAULT_ADMIN_PASSWORD = "Password@1!";
     public static final String DEFAULT_USER_PASSWORD = "Password@1!";
     public static final String[] LM_ROLES = { "assistant", "system", "user" };
     public static final String[] LM_MODELS = { "gpt-3.5", "gpt-4" };
+    public static final String LM_DEFAULT_MODEL = "gpt-3.5";
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     public static final String ROLE_USER = "ROLE_USER";
     public static final String ERROR_JWT_INVALID_TOKEN = "Invalid JWT token.";

@@ -5,10 +5,12 @@ import com.springboot.prompthub.models.entity.Project;
 import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.models.request.CreateProjectRequest;
 import com.springboot.prompthub.models.request.UpdateProjectRequest;
+import com.springboot.prompthub.models.response.ProjectResponse;
 import com.springboot.prompthub.repository.ProjectRepository;
 import com.springboot.prompthub.repository.UserRepository;
 import com.springboot.prompthub.service.ProjectService;
 import com.springboot.prompthub.utils.AppConstant;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final AuthenticationService authenticationService;
 
     public ProjectServiceImpl(
-            UserRepository userRepository,
             ProjectRepository projectRepository,
             AuthenticationService authenticationService) {
 
@@ -62,6 +63,6 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(String projectId) {
         Project project = getProject(projectId);
 
-        projectRepository.delete(project);
+        projectRepository.softDelete(project);
     }
 }

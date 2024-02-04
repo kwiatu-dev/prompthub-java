@@ -5,6 +5,7 @@ import com.springboot.prompthub.models.entity.Project;
 import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.models.request.CreateProjectRequest;
 import com.springboot.prompthub.models.request.UpdateProjectRequest;
+import com.springboot.prompthub.models.response.ProjectResponse;
 import com.springboot.prompthub.utils.AppConstant;
 import org.springframework.http.HttpStatus;
 

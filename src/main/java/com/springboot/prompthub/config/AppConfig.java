@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.javafaker.Faker;
 import com.springboot.prompthub.models.entity.User;
 import com.springboot.prompthub.service.impl.AuditorAwareImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.ui.Model;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

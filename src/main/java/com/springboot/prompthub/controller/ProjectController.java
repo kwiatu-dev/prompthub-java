@@ -3,8 +3,10 @@ package com.springboot.prompthub.controller;
 import com.springboot.prompthub.models.entity.Project;
 import com.springboot.prompthub.models.request.CreateProjectRequest;
 import com.springboot.prompthub.models.request.UpdateProjectRequest;
+import com.springboot.prompthub.models.response.ProjectResponse;
 import com.springboot.prompthub.models.response.SuccessResponse;
 import com.springboot.prompthub.service.ProjectService;
+import com.springboot.prompthub.service.impl.ResponseGeneratorService;
 import com.springboot.prompthub.utils.AppConstant;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -18,22 +20,31 @@ import java.util.List;
 @RequestMapping(AppConstant.API_VERSION + "/projects")
 public class ProjectController {
     private final ProjectService projectService;
+    private final ResponseGeneratorService responseGeneratorService;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(
+            ProjectService projectService,
+            ResponseGeneratorService responseGeneratorService) {
+
         this.projectService = projectService;
+        this.responseGeneratorService = responseGeneratorService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Project>> getAllProjects() {
+    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
+        List<Project> projects = projectService.getAllProjects();
+
         return new ResponseEntity<>(
-                projectService.getAllProjects(),
+                responseGeneratorService.mapToDTO(projects, new Project()),
                 HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Project> getProject(@PathVariable("id") String projectId) {
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable("id") String projectId) {
+        Project project = projectService.getProject(projectId);
+
         return new ResponseEntity<>(
-                projectService.getProject(projectId),
+                responseGeneratorService.mapToDTO(project),
                 HttpStatus.OK);
     }
 
@@ -46,7 +57,7 @@ public class ProjectController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("{id}")
+    @PutMapping("{id}")
     public ResponseEntity<SuccessResponse> updateProject(@RequestBody UpdateProjectRequest request, @PathVariable("id") String projectId) {
         projectService.updateProject(request, projectId);
 

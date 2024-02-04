@@ -58,8 +58,10 @@ public class PromptServiceImpl implements PromptService {
         Project project = projectService.getProject(projectId);
 
         Prompt prompt = new Prompt();
+        prompt.setProject(project);
         prompt.setName(request.getName());
         prompt.setDescription(request.getDescription());
+        prompt.setModel(AppConstant.LM_DEFAULT_MODEL);
 
         promptRepository.save(prompt);
     }
@@ -87,6 +89,6 @@ public class PromptServiceImpl implements PromptService {
         Project project = projectService.getProject(projectId);
         Prompt prompt = getPrompt(projectId, promptId);
 
-        promptRepository.save(prompt);
+        promptRepository.softDelete(prompt);
     }
 }

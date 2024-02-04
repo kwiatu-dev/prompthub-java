@@ -1,19 +1,24 @@
 package com.springboot.prompthub.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.util.List;
 
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 public class Prompt extends BaseEntity {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "project_id", nullable = false)
+    @JsonBackReference
     private Project project;
 
     @Column(name = "name", nullable = false, length = 128)
