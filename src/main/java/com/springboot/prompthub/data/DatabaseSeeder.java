@@ -1,5 +1,6 @@
 package com.springboot.prompthub.data;
 
+import com.springboot.prompthub.repository.RoleRepository;
 import com.springboot.prompthub.utils.AppConstant;
 import com.springboot.prompthub.models.entity.*;
 import com.springboot.prompthub.repository.ProjectRepository;
@@ -8,7 +9,9 @@ import com.springboot.prompthub.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Array;
 import java.util.*;
 
 @Component
@@ -17,7 +20,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final PromptRepository promptRepository;
-
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DatabaseSeeder(
@@ -25,11 +28,13 @@ public class DatabaseSeeder implements CommandLineRunner {
             UserRepository userRepository,
             ProjectRepository projectRepository,
             PromptRepository promptRepository,
+            RoleRepository roleRepository,
             PasswordEncoder passwordEncoder) {
         this.dataFactory = dataFactory;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.promptRepository = promptRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -52,6 +57,10 @@ public class DatabaseSeeder implements CommandLineRunner {
         Set<Role> rolesForUser = new HashSet<>();
         rolesForUser.add(roleUser);
 
+        List<Role> roles = new ArrayList<>();
+        roles.add(roleUser);
+        roles.add(roleAdmin);
+
         User admin = new User();
         admin.setEmail(AppConstant.DEFAULT_ADMIN_EMAIL);
         admin.setPassword(passwordEncoder.encode(AppConstant.DEFAULT_ADMIN_PASSWORD));
@@ -63,8 +72,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             user.setRoles(rolesForUser);
             setAuditableBy(user, admin);
         });
-
-        users.add(admin);
 
         List<Project> projects = dataFactory.generateProjects(10);
 
@@ -81,6 +88,8 @@ public class DatabaseSeeder implements CommandLineRunner {
             setAuditableBy(prompt, project.getCreatedBy());
         });
 
+        roleRepository.saveAll(roles);
+        userRepository.save(admin);
         userRepository.saveAll(users);
         projectRepository.saveAll(projects);
         promptRepository.saveAll(prompts);

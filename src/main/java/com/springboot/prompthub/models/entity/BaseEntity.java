@@ -31,7 +31,7 @@ public class BaseEntity implements Serializable {
     @UuidGenerator
     private String id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @CreatedBy
     @JsonIgnore
     @JoinColumn(name = "created_by")
@@ -41,7 +41,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @LastModifiedBy
     @JsonIgnore
     @JoinColumn(name = "modified_by")
@@ -51,7 +51,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "modified_at")
     private Date modifiedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "deleted_by")
     private User deletedBy;

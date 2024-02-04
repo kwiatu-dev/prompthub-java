@@ -32,11 +32,13 @@ public class SoftDeleteImpl implements SoftDelete {
             baseEntity.setDeletedBy(user);
         }
 
+        JpaRepository repository = applicationContext.getBean(baseEntity.getClass().getSimpleName() + "Repository", JpaRepository.class);
+        //todo: zapisać zmiany w bazie danych bez wykonywania wydarzeń z AuditingEntityListener.class
+        repository.save(baseEntity);
+        repository.delete(baseEntity);
+
         try{
-            JpaRepository repository = applicationContext.getBean(baseEntity.getClass().getSimpleName() + "Repository", JpaRepository.class);
-            //todo: zapisać zmiany w bazie danych bez wykonywania wydarzeń z AuditingEntityListener.class
-            repository.save(baseEntity);
-            repository.delete(baseEntity);
+
         }
         catch(Exception ex) {
             throw new APIException(
